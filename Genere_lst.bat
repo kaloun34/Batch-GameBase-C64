@@ -6,27 +6,37 @@ rem Reprise Script
 
 rem *********************DEBUT************************
 @echo off
+cls
 
-SETLOCAL enabledelayedexpansion
-set /A Compt=0
-set /A Compt2=0
-set /A Compt3=1
-set "LOGFILE=%MIST%\%0.log"
-set "LOGERROR=%MIST%\%0_errors.log"
+setlocal enableextensions
+setlocal enabledelayedexpansion
+set "MIST=%CD%"
+set "D64=%MIST%\D64"
+set "script=%~n0"
+set "LOGFILE=%MIST%\%script%.log"
+set "LOGERROR=%MIST%\%script%_errors.log"
+set /A NBC=0& ::Nombre de caractère du fichier
+set /A NBC2=0
+set /A NBCold=1
 
-call :log %LOGFILE% "%0 Log"
-call :log %LOGERROR% "%0 Log Error"
+call :log %LOGFILE% "%script% Log"
+call :log %LOGERROR% "%script% Log Error"
 
-for /f "delims=" %%a In ('dir /ad/b/s  "." ') Do (
-    cd "%%a"
-    dir *.d64;*.g64;*.t64 /A /B /O:GEN > filelist.txt
-    del *.lst 2>nul
+pushd "%D64%"
+	for /f "delims=" %%a In ('dir /ad/b/s') do (
+		cd "%%a"
+		2>nul dir *.d64;*.g64;*.t64 /A /B /O:GEN >filelist.txt
+		for /f "tokens=* delims=" %%a in (filelist.txt) do echo %%a>>filelist2.txt
 
-    for /f "delims=" %%l in (filelist.txt) do call:lst "%%l" >>"%LOGFILE%" 2>>"%LOGERROR%"
-	del filelist.txt
-    cd ..
-)
-
+		if exist "filelist2.txt" (
+			del *.lst 2>nul
+			for /F "delims=" %%l in (filelist2.txt) do call:lst "%%l" >>"%LOGFILE%" 2>>"%LOGERROR%"
+			del filelist2.txt
+		)
+		del filelist.txt
+		cd ..
+	)
+popd
 rem exit
 rem **********************FIN************************
 goto :FIN
@@ -43,47 +53,58 @@ goto :FIN
 
 rem -----------------Sous Routine LST----------------
 :lst
-set nom="%1"
-set nom2=!nom:~2,-2!
-
-for /F "tokens=1,2 delims=_" %%i in ("%nom%") do set nom3=%%i.lst
-
-echo "%nom%" | find "_" 2>nul
-if not "%errorlevel%"=="0" (for /F "tokens=1,2 delims=-" %%i in ("%nom%") do set nom3=%%i.lst)
-
-for /f "tokens=1,* delims=[,]" %%C in ('"%comspec% /u /c echo %nom2%|more|find /n /v """') do set /a Compt=%%C-4
-
-set /A ComptP=%Compt%+1
-set /A ComptM=%Compt%-1
-
-for /L %%x in (0,1,2) do (
-    if  %%x=="2" do (
-        set /A Compt=%Compt%-%%x
-    )
-    set /A Compt=%Compt+%%x
-    if %Compt%==%Compt2% (
-        if "%nom3%"=="%nom3old%" (
-            set /A Compt3+=1
-            if %Compt3% gtr 1 (
-                echo "%nom2%" >> "%nom3%"
-                goto :else
-            )
-            echo "%nomold%" >> "%nom3%"
-            echo "%nom2%" >> "%nom3%"
-        )
-    )
-)
+set NFIC=%~1& ::Nom du fichier
+echo "%NFIC%" | find "_" 2>nul
+if %errorlevel%==0 (goto :genere)
 rem -----------------Fin Sous Routine LST----------------
 goto :FIN
 
-rem -----------------Sous Routine ELSE----------------
-:else
-if "%nom3%" NEQ "%nom3old%" (set /A Compt3=1)
+rem -----------------Sous Routine GENERE----------------
+:genere
+for /F "tokens=1,2 delims=_" %%i in ("%NFIC%") do set NLST=%%i.lst
 
-set nomold=%nom2%
-set nom3old=%nom3%
-set Compt2=%Compt%
-rem -----------------Fin Sous Routine ELSE----------------
+::Compte le nombre de caractere du nom du fichier
+rem for /f "tokens=1,* delims=[,]" %%C in ('"%comspec%" /u /c echo %NFIC%|more|find /n /v ""') do set /a NBC=%%C-4
+pause
+call :Getnbcarac "%NFIC%"
+setlocal enableDelayedExpansion
+pause
+for /L %%x in (0,1,2) do (
+    set /A NBC=NBC+%%x
+    if  %%x=="2" do (set /A NBC=NBC-5)
+
+    if %NBC%==%NBC2% (
+        if "%NLST%"=="%NLSTold%" (
+            set /A NBCold+=1
+            if %NBCold% gtr 1 (
+                echo !NFIC!>> "%NLST%"
+				goto :else
+			)
+            echo !NFICold!>> "%NLST%"
+            echo !NFIC!>> "%NLST%"
+        )
+    )
+)
+
+:else
+if "%NLST%" NEQ "%NLSTold%" (set /A NBCold=1)
+set NFICold=%NFIC%
+set NLSTold=%NLST%
+set NBC2=%NBC%
+rem --------------Fin Sous Routine GENERE----------------
+goto :FIN
+
+rem -----------------Sous Routine NB CARAC----------------
+:Getnbcarac
+setlocal enableDelayedExpansion
+set "str=%~1"
+set "/a len=0"
+:loop
+if "!str:~%len%,1!" neq "" set /a "len+=1" & goto :loop
+echo len: %len%
+endlocal & set NBC=%len%-4
+exit /b
+rem -----------------fin Sous Routine NB CARAC--------------
 goto :FIN
 
 :FIN
