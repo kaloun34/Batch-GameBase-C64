@@ -40,23 +40,27 @@ rem -----------------Sous Routine GTR----------------
 :gtr
 setlocal EnableDelayedExpansion
 for /d %%D in (*) do (
-    REM Cas sous-dossier Numérique
-    for /f "delims=" %%D in ('dir /b /ad ^| findstr /r "^[1-9]$"') do (
-        set "dirnumber=%%~nD"
-        set "newname=0 [0!dirnumber!]"
-        ren "%%~fD" "!newname!"
-
-	)
-    REM Cas sous dossier Alpha-Numérique
-    for /f "delims=" %%D in ('dir /b /ad ^| findstr /r "^[A-Za-z][1-9]$"') do (
-        set "dirname=%%D"
-        set "letter=!dirname:~0,1!"
-        set "number=!dirname:~1!"
-        set "newname=!letter! [0!number!]"
-        echo Renaming %%D to !newname!
-        ren "%%D" "!newname!"
+        for /f "delims=" %%D in ('dir /b /ad /on ^| findstr /r "^[A-Za-z][1-9]$"') do (
+            set "dirname=%%D"
+            set "letter=!dirname:~0,1!"
+            set "number=!dirname:~1!"
+            set "newname=!letter! [0!number!]"
+            ren "%%D" "!newname!"
         )
-    )
+
+        for /f "delims=" %%F in ('dir /b /on ^| findstr /v /r "^[A-Za-z][1-9]$"') do (
+            set "dirname=%%D"
+            set "letter=!dirname:~0,1!"
+            set "number=!dirname:~1!"
+            if "!letter!"=="0" (
+                set "newname=!letter! [0!number!]"
+            ) else (
+                set "newname=!letter! [!number!]"
+            )
+            ren "%%D" "!newname!"
+        )
+
+)
 endlocal
 exit /b
 rem -----------------Fin Sous Routine GTR----------------
