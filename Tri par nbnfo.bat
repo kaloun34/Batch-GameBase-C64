@@ -91,7 +91,7 @@ pushd "%D64%"
                     set /a "filecount+=1"
                     move "!filename!"*.*  "!subfoldername!"
                 )
-                if !foldercount! gtr !nbnfo! ( call :gtr )
+                call :gtr
             )
         popd
     )
