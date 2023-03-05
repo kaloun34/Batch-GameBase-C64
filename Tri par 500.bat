@@ -5,7 +5,7 @@ rem *********************DEBUT************************
 @echo off
 setlocal enableextensions
 setlocal enabledelayedexpansion
-set "MIST=%CD:~0,-1%"
+set "MIST=%CD%"
 set "D64=%MIST%\D64"
 set "LOGFILE=%MIST%\script.log"
 set "LOGERROR=%MIST%\script_errors.log"
