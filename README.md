@@ -12,4 +12,5 @@ Utilisation:
 	- Le dossier GameBase original n'est pas modifié par ce script
 	- Il sera créé/écrasé un dossier D64 à l'endroit d'où vous l'exécuterez
 	- Le traitement dure plusieurs heures
-		
+	- Il est important de ne pas modifier l'encodage du fichier batch qui doit rester en ANSI (Windows 1252)
+	
