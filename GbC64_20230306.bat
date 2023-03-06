@@ -33,10 +33,10 @@ pushd "%ZIP%"
 	for /f "delims=" %%d In ('dir /ad/b/s  "." ') do (
 		cd "%%d" >nul 2>>"%LOGERROR%"
 		for %%z in (*.zip) do (
-			7z.exe -y x "%%z" -o"%TEMP%" >>"%LOGFILE%" 2>>"%LOGERROR%"
+			7z.exe -y x "%%z" -o"%TEMP%" >nul 2>>"%LOGERROR%"
 			pushd %TEMP%
 				for %%x in (*.t64) do (
-					"%TOOLS%"\c1541.exe -format "fromt64,01" d64 "%%~nx.d64" -tape "%%x" >>"%LOGFILE%" 2>>"%LOGERROR%"
+					"%TOOLS%"\c1541.exe -format "fromt64,01" d64 "%%~nx.d64" -tape "%%x" >nul 2>>"%LOGERROR%"
 					del "%%x" >nul 2>>"%LOGERROR%"
 				)
 
@@ -59,6 +59,9 @@ rem **********************FIN************************
 
 
 rem -----------------Sous Routine LOG----------------
+rem Utilisation : call kkwett >>"%LOGFILE%" 2>>"%LOGERROR%"
+				: call kkwett >nul 2>>"%LOGERROR%"
+				: call kkwett >>"%LOGFILE%" >nul
 :log
 set "FILE=%~1"
 echo %~2 > "%FILE%"
