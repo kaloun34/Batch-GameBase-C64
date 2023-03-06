@@ -8,6 +8,6 @@ Prérequis:
 
 Utilisation:
 - Copier et exécuter le script batch sur un dur/sous-dossier où vous disposes d'au moins de 4 à 5 Go d'espace libre.
-    - Rem : * Le dossier GameBase original n'est pas modifié par ce script
-            * Il vous crée un dossier D64 à l'endroit où se trouve le script
-            * Le traitement dure plusieurs heures 
+- Rem : - Le dossier GameBase original n'est pas modifié par ce script
+        - Il sera créé un dossier D64 à l'endroit d'où vous l'exécuterez
+        - Le traitement dure plusieurs heures 
