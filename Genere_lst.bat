@@ -45,7 +45,6 @@ pushd "%D64%"
             rem: pour chaque ligne du fichier filelist.txt
             for /f "delims=" %%l in (filelist.txt) do (
 				set "ligne=%%l"
-				echo "ligne: !ligne!" >>"%LOGFILE%" 2>>"%LOGERROR%"
 				call:lst "!ligne!" >>"%LOGFILE%" 2>>"%LOGERROR%"
 			)
             del filelist.txt 2>>"%LOGERROR%"
@@ -81,8 +80,7 @@ exit /b
     rem: Coupe le nom de fichier au délimiteur _ (ex: kkwet_Disk1a.d64  %%i=kkwet)
 
     for /F "tokens=1 delims=_" %%i in ("!nomfic!") do set nomlst="%%i".lst
-	echo "nomlst: !nomlst!"
-	echo "-----------------"
+    
     for /L %%x in (0,1,2) do (
         if  %%x=="2" do (
             set /a Compt=%Compt%-%%x
