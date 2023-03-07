@@ -6,8 +6,9 @@ rem Reprise Script
 
 rem *********************DEBUT************************
 @echo off
+cls
 
-rem CHCP 1252
+CHCP 1252
 setlocal enableextensions
 setlocal enabledelayedexpansion
 
@@ -16,23 +17,40 @@ set "D64=%MIST%\D64"
 set "script=%~n0"
 set "LOGFILE=%MIST%\%script%.log"
 set "LOGERROR=%MIST%\%script%_errors.log"
-set /A Compt=0
-set /A Compt2=0
-set /A Compt3=1
+set /a Compt=0
+set /a Compt2=0
+set /a Compt3=1
+
+echo "Génération des fichiers .lst en cours"
+echo ..........
 
 call :log %LOGFILE% "%script% Log"
 call :log %LOGERROR% "%script% Log Error"
 
 pushd "%D64%"
-    for /f "delims=" %%a In ('dir /ad/b/s  "." ') Do (
-        cd "%%a"
-        dir *.d64;*.g64;*.t64 /A /B /O:GEN > filelist.txt
-        del *.lst 2>nul
+    for /f "delims=" %%d in ('dir /ad/b/s') do (
+        cd "%%d"
+        rem: Il n'y a pas nécéssairement des fichiers dans les dossiers parcourues
 
-        for /f "delims=" %%l in (filelist.txt) do call:lst "%%l" >>"%LOGFILE%" 2>>"%LOGERROR%"
-	
-        del filelist.txt
-        cd ..
+        set "found="
+        if exist "*.d64" set found=true
+        if exist "*.t64" set found=true
+        if exist "*.g64" set found=true
+        if exist "*.tap" set found=true
+
+        if defined found (
+            dir "*.d64";"*.g64";"*.t64";"*.tap" /a /B /O:GEN > filelist.txt 2>>"%LOGERROR%"
+            del *.lst 2>nul
+
+            rem: pour chaque ligne du fichier filelist.txt
+            for /f "delims=" %%l in (filelist.txt) do (
+				set "ligne=%%l"
+				echo "ligne: !ligne!" >>"%LOGFILE%" 2>>"%LOGERROR%"
+				call:lst "!ligne!" >>"%LOGFILE%" 2>>"%LOGERROR%"
+			)
+            del filelist.txt 2>>"%LOGERROR%"
+            cd ..
+        )
     )
 popd
 goto:EOF
@@ -41,9 +59,9 @@ rem **********************FIN************************
 
 
 
-rem -----------------Sous Routine LOG----------------
+:: -----------------Sous Routine LOG----------------
 :log
-	setlocal 
+	setlocal
 	set "FILE=%~1"
 	echo %~2 > "%FILE%"
 	echo. >> "%FILE%" & echo ================= >> "%FILE%"
@@ -51,53 +69,45 @@ rem -----------------Sous Routine LOG----------------
 	echo. >> "%FILE%"
 	endlocal
 exit /b
-rem -----------------Fin Sous Routine LOG----------------
+:: -----------------Fin Sous Routine LOG----------------
 
 
-rem -----------------Sous Routine LST----------------
+:: -----------------Sous Routine LST----------------
 :lst
-rem setlocal enabledelayedexpansion
-    set nom="%1"
-    set nom2=!nom:~2,-2!
-    
-    for /F "tokens=1,2 delims=_" %%i in ("%nom%") do set nom3=%%i.lst
-    
-    echo "%nom%" | find "_" 2>nul
-    
-    if not "%errorlevel%"=="0" (
-        for /F "tokens=1,2 delims=-" %%i in ("%nom%") do set nom3=%%i.lst
-    )
+    rem: Traitement du fichier filelist.txt contenent tous les fichiers C64
+    set "nomfic=%~1"
+	set "nomfic=!nomfic:^^^&=^&!"
 
-    for /f "tokens=1,* delims=[,]" %%C in ('"%comspec% /u /c echo %nom2%|more|find /n /v """') do set /a Compt=%%C-4
+    rem: Coupe le nom de fichier au délimiteur _ (ex: kkwet_Disk1a.d64  %%i=kkwet)
 
-    set /A ComptP=%Compt%+1
-    set /A ComptM=%Compt%-1
-
+    for /F "tokens=1 delims=_" %%i in ("!nomfic!") do set nomlst="%%i".lst
+	echo "nomlst: !nomlst!"
+	echo "-----------------"
     for /L %%x in (0,1,2) do (
         if  %%x=="2" do (
-            set /A Compt=%Compt%-%%x
+            set /a Compt=%Compt%-%%x
         )
-        set /A Compt=%Compt+%%x
+        set /a Compt=%Compt+%%x
         if %Compt%==%Compt2% (
-            if "%nom3%"=="%nom3old%" (
-                set /A Compt3+=1
+            if "!nomlst!"=="!nomlstold!" (
+                set /a Compt3+=1
                 if %Compt3% gtr 1 (
-                    echo !nom2! >> "%nom3%"
-                    goto else
+                    echo !nomfic! >> "!nomlst!"
+                    goto :else
                 )
-                echo !nomold! >> "%nom3%"
-                echo !nom2! >> "%nom3%"   
+                echo !nomold! >> "!nomlst!"
+                echo !nomfic! >> "!nomlst!"
             )
         )
     )
-
+    ::Sous-Routine else
     :else
-        if "%nom3%" NEQ "%nom3old%" (set /A Compt3=1)
-
-            set nomold=%nom2%
-            set nom3old=%nom3%
-            set Compt2=%Compt%
-rem endlocal
+        if "!nomlst!" NEQ "!nomlstold!" (set /a Compt3=1)
+		set nomold=!nomfic!
+		set nomlstold=!nomlst!
+		set Compt2=%Compt%
+	:: Fin else
 exit /b
+:: -----------------Fin Sous Routine LST----------------
 
 :EOF
