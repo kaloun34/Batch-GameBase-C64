@@ -21,7 +21,7 @@ set /a Compt=0
 set /a Compt2=0
 set /a Compt3=1
 
-echo "Génération des fichiers .lst en cours"
+echo "GÃ©nÃ©ration des fichiers .lst en cours"
 echo ..........
 
 call :log %LOGFILE% "%script% Log"
@@ -30,7 +30,7 @@ call :log %LOGERROR% "%script% Log Error"
 pushd "%D64%"
     for /f "delims=" %%d in ('dir /ad/b/s') do (
         cd "%%d"
-        rem: Il n'y a pas nécéssairement des fichiers dans les dossiers parcourues
+        rem: Il n'y a pas nÃ©cÃ©ssairement des fichiers dans les dossiers parcourus
 
         set "found="
         if exist "*.d64" set found=true
@@ -77,7 +77,7 @@ exit /b
     set "nomfic=%~1"
 	set "nomfic=!nomfic:^^^&=^&!"
 
-    rem: Coupe le nom de fichier au délimiteur _ (ex: kkwet_Disk1a.d64  %%i=kkwet)
+    rem: Coupe le nom de fichier au dÃ©limiteur _ (ex: kkwet_Disk1a.d64  %%i=kkwet)
 
     for /F "tokens=1 delims=_" %%i in ("!nomfic!") do set nomlst="%%i".lst
     
