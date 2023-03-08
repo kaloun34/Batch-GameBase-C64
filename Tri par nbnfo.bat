@@ -5,7 +5,7 @@ rem # (19/02/2023)
 @echo off
 cls
 
-rem CHCP 1252
+CHCP 1252
 setlocal enableextensions
 setlocal enabledelayedexpansion
 set "MIST=%CD%"
@@ -46,19 +46,19 @@ exit /b
 	for /d %%D in (*) do (
 		rem: Dossiers composés d'une lettre et d'un chiffre
         for /f "delims=" %%D in ('dir /b /ad /on ^| findstr /r "^[A-Za-z][1-9]$"') do (
-            if %errorlevel% equ 0 (
+            if not errorlevel 1 (
                 set "dirname=%%D"
                 set "letter=!dirname:~0,1!"
                 set "number=!dirname:~1!"
                 set "newname=!letter! [0!number!]"
-            
-                ren "%%D" "!newname!" 
+
+                ren "%%D" "!newname!"
             )
         )
 
 		rem: les autres dossiers
         for /f "delims=" %%F in ('dir /b /on ^| findstr /v /r "^[A-Za-z][1-9]$"') do (
-            if %errorlevel% equ 0 (
+            if not errorlevel 1 (
                 set "dirname=%%D"
                 set "letter=!dirname:~0,1!"
                 set "number=!dirname:~1!"
@@ -69,7 +69,7 @@ exit /b
                     rem: une lettre et déjà deux chiffres
                     set "newname=!letter! [!number!]"
                 )
-                ren "%%D" "!newname!" 2>nul
+                ren "%%D" "!newname!"
             )
         )
 	)
