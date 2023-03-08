@@ -27,7 +27,7 @@ goto :EOF
 
 
 
-:: -----------------Sous Routine LOG----------------
+:: -----------------Routine LOG----------------
 :log
 	setlocal
 	set "FILE=%~1"
@@ -37,40 +37,45 @@ goto :EOF
 	echo. >> "%FILE%"
 	endlocal
 exit /b
-:: -----------------Fin Sous Routine LOG----------------
+:: -----------------Fin Routine LOG----------------
 
 
-:: -----------------Sous Routine GTR----------------
+:: -----------------Routine GTR----------------
 :gtr
 	setlocal EnableDelayedExpansion
 	for /d %%D in (*) do (
 		rem: Dossiers composés d'une lettre et d'un chiffre
         for /f "delims=" %%D in ('dir /b /ad /on ^| findstr /r "^[A-Za-z][1-9]$"') do (
-            set "dirname=%%D"
-            set "letter=!dirname:~0,1!"
-            set "number=!dirname:~1!"
-            set "newname=!letter! [0!number!]"
-            ren "%%D" "!newname!"
+            if %errorlevel% equ 0 (
+                set "dirname=%%D"
+                set "letter=!dirname:~0,1!"
+                set "number=!dirname:~1!"
+                set "newname=!letter! [0!number!]"
+            
+                ren "%%D" "!newname!" 
+            )
         )
 
 		rem: les autres dossiers
         for /f "delims=" %%F in ('dir /b /on ^| findstr /v /r "^[A-Za-z][1-9]$"') do (
-            set "dirname=%%D"
-            set "letter=!dirname:~0,1!"
-            set "number=!dirname:~1!"
-            if "!letter!"=="0" (
-				rem: le cas du dossier 0
-                set "newname=!letter! [0!number!]"
-            ) else (
-                rem: une lettre et déjà deux chiffres
-                set "newname=!letter! [!number!]"
+            if %errorlevel% equ 0 (
+                set "dirname=%%D"
+                set "letter=!dirname:~0,1!"
+                set "number=!dirname:~1!"
+                if "!letter!"=="0" (
+                    rem: le cas du dossier 0
+                    set "newname=!letter! [0!number!]"
+                ) else (
+                    rem: une lettre et déjà deux chiffres
+                    set "newname=!letter! [!number!]"
+                )
+                ren "%%D" "!newname!" 2>nul
             )
-            ren "%%D" "!newname!"
         )
 	)
 	endlocal
 exit /b
-:: -----------------Fin Sous Routine GTR----------------
+:: -----------------Fin Routine GTR----------------
 
 
 :: -----------------Routine MAIN----------------
