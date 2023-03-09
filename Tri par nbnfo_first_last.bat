@@ -49,7 +49,7 @@ exit /b
 			set "dirname=%%D"
 			set "letter=!dirname:~0,1!"
 			set "number=!dirname:~1!"
-			set "newname=!letter! [0!number!]"
+			set "newname=!letter!  [0!number!]"
 			ren "%%D" "!newname!"
 		)
 
@@ -58,7 +58,7 @@ exit /b
 			set "dirname=%%D"
 			set "letter=!dirname:~0,1!"
 			set "number=!dirname:~1!"
-			set "newname=!letter! [!number!]"
+			set "newname=!letter!  [!number!]"
 			ren "%%D" "!newname!"
 		)
 
@@ -67,7 +67,7 @@ exit /b
 			set "dirname=%%D"
 			set "letter=0"
 			set /a "num=!dirname!"
-			set "newname=!letter! [!dirname!]"
+			set "newname=!letter!  [!dirname!]"
 			ren "%%D" "!newname!"
 		)
 	)
@@ -107,7 +107,7 @@ exit /b
 		echo "Firstr: !Firstr!"
 		echo "Lastr: !LAstr!"
 
-        ren "%%D" "%%D  (!Firstr! - !Lastr!)"
+        ren "%%D" "%%D  (!Firstr!  --  !Lastr!)"
 
     )
     endlocal
