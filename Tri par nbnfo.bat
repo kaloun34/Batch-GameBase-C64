@@ -44,34 +44,32 @@ exit /b
 :gtr
 	setlocal EnableDelayedExpansion
 	for /d %%D in (*) do (
-		rem: Dossiers composés d'une lettre et d'un chiffre
-        for /f "delims=" %%D in ('dir /b /ad /on ^| findstr /r "^[A-Za-z][1-9]$"') do (
-            if not errorlevel 1 (
-                set "dirname=%%D"
-                set "letter=!dirname:~0,1!"
-                set "number=!dirname:~1!"
-                set "newname=!letter! [0!number!]"
+		rem: Dossiers composés d'une lettre et un chiffre
+		for /f "delims=" %%D in ('dir /b /ad /on ^| findstr /r "^[A-Za-z][0-9]$"') do (
+			set "dirname=%%D"
+			set "letter=!dirname:~0,1!"
+			set "number=!dirname:~1!"
+			set "newname=!letter! [0!number!]"
+			ren "%%D" "!newname!"
+		)
 
-                ren "%%D" "!newname!"
-            )
-        )
+		rem: Dossiers composés d'une lettre et plusieurs chiffres
+		for /f "delims=" %%D in ('dir /b /ad /on ^| findstr /r "^[A-Za-z][1-9][0-9]*$"') do (
+			set "dirname=%%D"
+			set "letter=!dirname:~0,1!"
+			set "number=!dirname:~1!"
+			set "newname=!letter! [!number!]"
+			ren "%%D" "!newname!"
+		)
 
-		rem: les autres dossiers
-        for /f "delims=" %%F in ('dir /b /on ^| findstr /v /r "^[A-Za-z][1-9]$"') do (
-            if not errorlevel 1 (
-                set "dirname=%%D"
-                set "letter=!dirname:~0,1!"
-                set "number=!dirname:~1!"
-                if "!letter!"=="0" (
-                    rem: le cas du dossier 0
-                    set "newname=!letter! [0!number!]"
-                ) else (
-                    rem: une lettre et déjà deux chiffres
-                    set "newname=!letter! [!number!]"
-                )
-                ren "%%D" "!newname!"
-            )
-        )
+		rem: Dossiers composés uniquement de chiffres
+		for /f "delims=" %%D in ('dir /b /ad /on ^| findstr /r "^[0-9][0-9]*$"') do (
+			set "dirname=%%D"
+			set "letter=0"
+			set /a "num=!dirname!"
+			set "newname=!letter! [!dirname!]"
+			ren "%%D" "!newname!"
+		)
 	)
 	endlocal
 exit /b
