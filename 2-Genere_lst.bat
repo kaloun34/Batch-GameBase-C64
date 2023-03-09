@@ -4,7 +4,7 @@ rem # (03/12/2022)
 rem 21/02/2023
 rem Reprise Script
 
-rem *********************DEBUT************************
+:: *********************DEBUT************************
 @echo off
 cls
 
@@ -21,7 +21,7 @@ set /a Compt=0
 set /a Compt2=0
 set /a Compt3=1
 
-echo "GÃ©nÃ©ration des fichiers .lst en cours"
+echo "Génération des fichiers .lst en cours"
 echo ..........
 
 call :log %LOGFILE% "%script% Log"
@@ -30,7 +30,7 @@ call :log %LOGERROR% "%script% Log Error"
 pushd "%D64%"
     for /f "delims=" %%d in ('dir /ad/b/s') do (
         cd "%%d"
-        rem: Il n'y a pas nÃ©cÃ©ssairement des fichiers dans les dossiers parcourus
+        rem: Il n'y a pas nécéssairement des fichiers dans les dossiers parcourues
 
         set "found="
         if exist "*.d64" set found=true
@@ -54,11 +54,11 @@ pushd "%D64%"
 popd
 goto:EOF
 rem exit
-rem **********************FIN************************
+:: **********************FIN************************
 
 
 
-:: -----------------Sous Routine LOG----------------
+:: -----------------Routine LOG----------------
 :log
 	setlocal
 	set "FILE=%~1"
@@ -68,16 +68,16 @@ rem **********************FIN************************
 	echo. >> "%FILE%"
 	endlocal
 exit /b
-:: -----------------Fin Sous Routine LOG----------------
+:: -----------------Fin Routine LOG----------------
 
 
-:: -----------------Sous Routine LST----------------
+:: -----------------Routine LST----------------
 :lst
     rem: Traitement du fichier filelist.txt contenent tous les fichiers C64
     set "nomfic=%~1"
 	set "nomfic=!nomfic:^^^&=^&!"
 
-    rem: Coupe le nom de fichier au dÃ©limiteur _ (ex: kkwet_Disk1a.d64  %%i=kkwet)
+    rem: Coupe le nom de fichier au délimiteur _ (ex: kkwet_Disk1a.d64  %%i=kkwet)
 
     for /F "tokens=1 delims=_" %%i in ("!nomfic!") do set nomlst="%%i".lst
     
@@ -106,6 +106,6 @@ exit /b
 		set Compt2=%Compt%
 	:: Fin else
 exit /b
-:: -----------------Fin Sous Routine LST----------------
+:: -----------------Fin Routine LST----------------
 
 :EOF
