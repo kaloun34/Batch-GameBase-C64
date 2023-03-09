@@ -15,7 +15,7 @@ set "LOGFILE=%MIST%\%script%.log"
 set "LOGERROR=%MIST%\%script%_errors.log"
 set /a nbnfo=50
 
-echo "Opération de tri par !nbnfo! fichiers nfo en cours"
+echo "OpÃ©ration de tri par !nbnfo! fichiers nfo en cours"
 echo ..........
 
 call :log "%LOGFILE%" "%script% Log"
@@ -44,7 +44,7 @@ exit /b
 :gtr
 	setlocal EnableDelayedExpansion
 	for /d %%D in (*) do (
-		rem: Dossiers composés d'une lettre et un chiffre
+		rem: Dossiers composÃ©s d'une lettre et un chiffre
 		for /f "delims=" %%D in ('dir /b /ad /on ^| findstr /r "^[A-Za-z][0-9]$"') do (
 			set "dirname=%%D"
 			set "letter=!dirname:~0,1!"
@@ -53,7 +53,7 @@ exit /b
 			ren "%%D" "!newname!"
 		)
 
-		rem: Dossiers composés d'une lettre et plusieurs chiffres
+		rem: Dossiers composÃ©s d'une lettre et plusieurs chiffres
 		for /f "delims=" %%D in ('dir /b /ad /on ^| findstr /r "^[A-Za-z][1-9][0-9]*$"') do (
 			set "dirname=%%D"
 			set "letter=!dirname:~0,1!"
@@ -62,7 +62,7 @@ exit /b
 			ren "%%D" "!newname!"
 		)
 
-		rem: Dossiers composés uniquement de chiffres
+		rem: Dossiers composÃ©s uniquement de chiffres
 		for /f "delims=" %%D in ('dir /b /ad /on ^| findstr /r "^[0-9][0-9]*$"') do (
 			set "dirname=%%D"
 			set "letter=0"
