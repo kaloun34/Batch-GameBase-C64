@@ -92,53 +92,56 @@ setlocal enabledelayedexpansion
 			set "name=%%b"
 			set "name=!name:à=a!"
 			set "name=!name:á=a!"
+			set "name=!name:â=a!"
+			set "name=!name:Â=A!"
+			set "name=!name:Á=A!"
 			set "name=!name:ã=a!"
 			set "name=!name:ä=a!"
+			set "name=!name:Ä=A!"
+			set "name=!name:å=a!"
+			set "name=!name:Å=A!"
 			set "name=!name:ç=c!"
 			set "name=!name:è=e!"
+			set "name=!name:È=E!"
 			set "name=!name:é=e!"
+			set "name=!name:É=E!"
 			set "name=!name:ê=e!"
+			set "name=!name:Ê=E!"
 			set "name=!name:ò=o!"
 			set "name=!name:ó=o!"
 			set "name=!name:ô=o!"
 			set "name=!name:ö=o!"
+			set "name=!name:Ö=O!"
 			set "name=!name:ø=o!"
 			set "name=!name:ù=u!"
 			set "name=!name:ú=u!"
+			set "name=!name:Ú=U!"
 			set "name=!name:û=u!"
 			set "name=!name:ü=u!"
-			set "name=!name:ý=y!"
-			set "name=!name:ÿ=y!"
-			set "name=!name:Á=A!"
-			set "name=!name:Ä=A!"
-			set "name=!name:Â=A!"
-			set "name=!name:?=A!"
-			set "name=!name:Å=A!"
-			set "name=!name:É=E!"
-			set "name=!name:È=E!"
-			set "name=!name:Ê=E!"
-			set "name=!name:Ö=O!"
-			set "name=!name:Ú=U!"
 			set "name=!name:Ü=U!"
+			set "name=!name:ý=y!"
 			set "name=!name:Ý=Y!"
+			set "name=!name:ÿ=y!"
+			set "name=!name:ß=ss!"
+			set "name=!name:æ=ae!"
 			set "name=!name::=!"
 			set "name=!name:?=!"
-			set "name=!name:/= !"
+			set "name=!name:/=-!"
 		) else if "%%a"=="Published" (
 			set "date=%%b"
 			set "date=!date:?=x!"
 			set "date=!date:~0,4!"
 		) else if "%%a"=="Language" (
 			set "lang=%%b"
-			set "lang=!lang:/= !"
+			set "lang=!lang:/=-!"
 			set "lang=!lang::=!"
         ) else if "%%a"=="Players" (
 			set "play=%%b"
-			set "play=!play:/= !"
+			set "play=!play:/=-!"
 			set "play=!play::=!"
         ) else if "%%a"=="Control" (
 			set "ctrl=%%b"
-			set "ctrl=!ctrl:/= !"
+			set "ctrl=!ctrl:/=-!"
 			set "ctrl=!ctrl::=!"
 		)
     )
@@ -146,7 +149,19 @@ setlocal enabledelayedexpansion
     call :replace "name" "*" ""
 
     set "name=!new!"
-    set "result=%name% (%date%) (%lang%) (%play%) (%ctrl%)"
+
+		rem -----------------Sous Routine Majus---------------
+		:majus
+
+				set "fname=%name:~0,1%"
+				set "rname=%name:~1%"
+
+				for %%a in (A B C D E F G H I J K L M N O P Q R S T U V W X Y Z) do (
+					set "fname=!fname:%%a=%%a!"
+				)
+		rem -----------------Fin Sous Routine MINUS--------------
+
+    set "result=!fname!%rname% (%date%) (%lang%) (%play%) (%ctrl%)"
     set /a "count=1"
     set test=0
 
