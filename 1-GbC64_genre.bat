@@ -291,14 +291,18 @@ rem ******************SOUS ROUTINES******************
 						set "genre=!genre::=!"
 					)
 
-					for /f "tokens=1,* delims=-" %%a in ("!genre!") do (
-						set "genre=%%a"
-						set "sgenre=%%b"
-						set "genre=!genre:~0,-1!"
-						set "sgenre=!sgenre:~1!"
+					if "!genre:-=!"=="!genre!" (
+						set "sgenre="
+					) else (
+						for /f "tokens=1,* delims=-" %%a in ("!genre!") do (
+							set "genre=%%a"
+							set "sgenre=%%b"
+							set "genre=!genre:~0,-1!"
+							set "sgenre=!sgenre:~1!"
+						)
 					)
 				: -----------------Fin Sous Routine GENRE---------------
-				md "!genre!\!sgenre!\!r!"
+				md "!genre!\!sgenre!\!r!" 2>nul
 				move "!nom!*.*" ".\!genre!\!sgenre!\!r!"
 			)
 		: -----------------Fin Sous Routine TRI---------------
