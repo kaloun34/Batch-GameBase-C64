@@ -8,6 +8,7 @@ rem *********************DEBUT************************
 @echo off
 cls
 
+CHCP 1252
 setlocal enableextensions
 set "script=%~n0"
 
@@ -30,6 +31,7 @@ rmdir /Q /S %D64% >nul 2>>"%LOGERROR%"
 mkdir %TEMP%
 
 pushd "%ZIP%"
+	rem : Parcours du dossier GameBase, décompression fichier par ficher avec conversion si besoin en D64
 	for /f "delims=" %%d In ('dir /ad/b/s  "." ') do (
 		cd "%%d" >nul 2>>"%LOGERROR%"
 		for %%z in (*.zip) do (
@@ -40,12 +42,17 @@ pushd "%ZIP%"
 					del "%%x" >nul 2>>"%LOGERROR%"
 				)
 
+				rem Appel routine SUPPR pour suppresion d'un éventuel ! dans le nom de fichier
 				for /f "delims=" %%a in ('dir /a:-d /o:n /b *.d64 *.crt *.tap *.g64 *.d81 *.reu *.prg *.t64') do ( call :suppr "%%a" >nul 2>>"%LOGERROR%" )
 
+				rem Appel routine NAME (renomme fichiers du jeu en fonction de son nfo )
 				call :name >nul 2>>"%LOGERROR%"
 			popd
 
-            rem appel des sous-routines SUITE, MINUS et TRI en delayedexpansion
+            rem : Appel des sous-routines SUITE, MINUS et TRI en delayedexpansion
+				: SUITE pour les jeux sur plusieurs D7
+				: MINUS pour passer les extensions de fichier en minuscule
+				: TRI des fichiers par la 1ere lettre du nom de fichier
 			call :sroutines >nul 2>>"%LOGERROR%"
 		)
 		cd..
@@ -58,10 +65,10 @@ rem **********************FIN************************
 
 
 
-rem -----------------Sous Routine LOG----------------
-rem Utilisation : call kkwett >>"%LOGFILE%" 2>>"%LOGERROR%"
-				: call kkwett >nul 2>>"%LOGERROR%"
-				: call kkwett >>"%LOGFILE%" >nul
+: -----------------Routine LOG----------------
+	rem : Utilisation : call kkwett >>"%LOGFILE%" 2>>"%LOGERROR%"
+		: call kkwett >nul 2>>"%LOGERROR%"
+		: call kkwett >>"%LOGFILE%" >nul
 :log
 set "FILE=%~1"
 echo %~2 > "%FILE%"
@@ -69,20 +76,20 @@ echo. >> "%FILE%" & echo ================= >> "%FILE%"
 echo Date: %date% %time% >> "%FILE%" & echo ================= >> "%FILE%"
 echo. >> "%FILE%"
 exit /b
-rem -----------------Fin Sous Routine LOG----------------
+: -----------------Fin Routine LOG----------------
 
 
-rem -----------------Sous Routine SUPPR----------------
+: -----------------Sous SUPPR----------------
 :suppr
-    rem Suppression du ! dans le nom de fichier qui est bloquant sur un delayedexpansion
+    rem : Suppression du ! dans le nom de fichier qui est bloquant sur un delayedexpansion
     set "oldname=%~nx1"
     set "newname=%oldname:!=x%"
     if "%newname%" neq "%~nx1" ( ren "%oldname%" "%newname%" )
 exit /b
-rem -----------------Fin Sous Routine SUPPR----------------
+: -----------------Fin Routine SUPPR----------------
 
 
-rem -----------------Sous Routine NAME---------------
+: -----------------Routine NAME---------------
 :name
 setlocal enabledelayedexpansion
     CHCP 1252
@@ -146,11 +153,19 @@ setlocal enabledelayedexpansion
 		)
     )
 
-    call :replace "name" "*" ""
+		: -----------------Sous Routine ASTERIX---------------
+		set /a pos=0
+			Rem : Suppresion des éventuelles * dans le nom du jeu
+				: qui ne passe pas avec la commande précédente de substitution même avec un échappement
+		:asterix
+			set /a plusone=%pos%+1
+			if "!name:~%pos%,1!"=="*" set name=!name:~0,%pos%!!name:~%plusone%!
+			set /a pos=%pos%+1
+			if not "!name:~%pos%,1!"=="" goto :asterix
+		: -----------------Fin Sous Routine ASTERIX-------------
 
-    set "name=!new!"
-
-		rem -----------------Sous Routine Majus---------------
+		: -----------------Sous Routine MAJUS---------------
+			rem : Dans certain nfo, le nom du jeu commence par une minuscule
 		:majus
 
 				set "fname=%name:~0,1%"
@@ -159,7 +174,7 @@ setlocal enabledelayedexpansion
 				for %%a in (A B C D E F G H I J K L M N O P Q R S T U V W X Y Z) do (
 					set "fname=!fname:%%a=%%a!"
 				)
-		rem -----------------Fin Sous Routine MINUS--------------
+		: -----------------Fin Sous Routine MAJUS--------------
 
     set "result=!fname!%rname% (%date%) (%lang%) (%play%) (%ctrl%)"
     set /a "count=1"
@@ -198,25 +213,7 @@ setlocal enabledelayedexpansion
 		set /a count=!count!+1
     )
 exit /b
-rem -----------------Fin Sous Routine NAME---------------
-
-
-rem -----------------Sous Routine REPLACE---------------
-:replace
-    set "old=!%~1!"
-    set "new="
-    rem On compte le nombre de caractère de la variable en premier argument en entrée
-    for /F "delims=:" %%c in ('(echo."!old!"^& echo.^)^|FindStr /O .') do set /A "$=%%c"
-    for /L %%i in (0,1,%$%) do (
-        If "!old:~%%i,1!" EQU "%~2" (
-            set "new=!new!%~3"
-        ) else (
-            set "new=!new!!old:~%%i,1!"
-		)
-    )
-    endlocal & set "new=!new!"
-exit /b
-rem -----------------Fin Sous Routine REPLACE---------------
+: -----------------Fin Routine NAME---------------
 
 
 rem ******************SOUS ROUTINES******************
@@ -224,7 +221,7 @@ rem ******************SOUS ROUTINES******************
     setlocal enableextensions
     setlocal enabledelayedexpansion
 	pushd "%D64%"
-		rem -----------------Sous Routine SUITE---------------
+		: -----------------Sous Routine SUITE---------------
 		:suite
 			set "prevprefix="
 			set "next=a"
@@ -259,9 +256,9 @@ rem ******************SOUS ROUTINES******************
 					)
 				)
 			)
-		rem -----------------Fin Sous Routine SUITE---------------
+		: -----------------Fin Sous Routine SUITE---------------
 
-		rem -----------------Sous Routine MINUS---------------
+		: -----------------Sous Routine MINUS---------------
 		:minus
 			for %%f in (*.*) do (
 				set "filename=%%~f"
@@ -274,9 +271,9 @@ rem ******************SOUS ROUTINES******************
 
 				ren "!filename!" "!name!!ext!"
 			)
-		rem -----------------Fin Sous Routine MINUS--------------
+		: -----------------Fin Sous Routine MINUS--------------
 
-		rem -----------------Sous Routine TRI---------------
+		: -----------------Sous Routine TRI---------------
 		:tri
     		for %%f in (*.d64 *.nfo *.crt *.tap *.g64 *.d81 *.reu *.prg *.t64) do (
 				set "nom=%%f"
@@ -289,7 +286,7 @@ rem ******************SOUS ROUTINES******************
 				md "!r!" 2> nul
 				move "!nom!" .\"!r!"
 			)
-		rem -----------------Fin Sous Routine TRI---------------
+		: -----------------Fin Sous Routine TRI---------------
 	popd
 	endlocal
 rem ******************Fin SOUS ROUTINES******************
