@@ -7,7 +7,7 @@ Prérequis:
     - Tools     ex: "TOOLS=%GB64%\Emulators" (il faut qu'il pointe vers le dossier ou se trouve l'utilitaire C1541.exe)
 
 Utilisation:
-- Copier et exécuter le script batch sur un dur/sous-dossier où vous disposes d'au moins de 4 à 5 Go d'espace libre.
+- Copier et exécuter le script batch sur un lecteur/sous-dossier où vous disposez d'au moins de 4 à 5 Go d'espace libre.
 - Rem: 
 	- Le dossier GameBase original n'est pas modifié par ce script
 	- Il sera créé/écrasé un dossier D64 à l'endroit d'où vous l'exécuterez
