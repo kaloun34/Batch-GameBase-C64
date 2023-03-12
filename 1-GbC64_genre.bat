@@ -52,7 +52,7 @@ pushd "%ZIP%"
 				: SUITE pour les jeux sur plusieurs D7
 				: MINUS pour passer les extensions de fichier en minuscule
 				: TRI des fichiers par la 1ere lettre du nom de fichier
-			call :sroutines >>"%LOGFILE%" 2>>"%LOGERROR%"
+			call :sroutines >nul 2>>"%LOGERROR%"
 		)
 		cd..
 	)
@@ -292,18 +292,19 @@ rem ******************SOUS ROUTINES******************
 					)
 
 					if "!genre:-=!"=="!genre!" (
-						set "sgenre="
+						set "folder=!genre!"
 					) else (
 						for /f "tokens=1,* delims=-" %%a in ("!genre!") do (
 							set "genre=%%a"
 							set "sgenre=%%b"
 							set "genre=!genre:~0,-1!"
 							set "sgenre=!sgenre:~1!"
+							set "folder=!genre!\!sgenre!"
 						)
 					)
 				: -----------------Fin Sous Routine GENRE---------------
-				md "!genre!\!sgenre!\!r!" 2>nul
-				move "!nom!*.*" ".\!genre!\!sgenre!\!r!"
+				md "!folder!\!r!" 2>nul
+				move "!nom!*.*" ".\!folder!\!r!"
 			)
 		: -----------------Fin Sous Routine TRI---------------
 	popd
