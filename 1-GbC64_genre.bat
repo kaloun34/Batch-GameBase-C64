@@ -8,7 +8,6 @@ rem *********************DEBUT************************
 @echo off
 cls
 
-CHCP 1252
 setlocal enableextensions
 set "script=%~n0"
 
@@ -53,7 +52,7 @@ pushd "%ZIP%"
 				: SUITE pour les jeux sur plusieurs D7
 				: MINUS pour passer les extensions de fichier en minuscule
 				: TRI des fichiers par la 1ere lettre du nom de fichier
-			call :sroutines >nul 2>>"%LOGERROR%"
+			call :sroutines >>"%LOGFILE%" 2>>"%LOGERROR%"
 		)
 		cd..
 	)
@@ -291,12 +290,15 @@ rem ******************SOUS ROUTINES******************
 						set "genre=!genre:/=-!"
 						set "genre=!genre::=!"
 					)
-					for /f "tokens=1,* delims=- " %%a in ("!genre!") do (
+
+					for /f "tokens=1,* delims=-" %%a in ("!genre!") do (
 						set "genre=%%a"
 						set "sgenre=%%b"
+						set "genre=!genre:~0,-1!"
+						set "sgenre=!sgenre:~1!"
 					)
 				: -----------------Fin Sous Routine GENRE---------------
-				md "!genre!\!sgenre!\!r!" 2> nul
+				md "!genre!\!sgenre!\!r!"
 				move "!nom!*.*" ".\!genre!\!sgenre!\!r!"
 			)
 		: -----------------Fin Sous Routine TRI---------------
