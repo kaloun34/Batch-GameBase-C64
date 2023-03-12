@@ -3,8 +3,8 @@
 Prérequis : 
 - GameBase 64
 - Dans le script GBC64.bat, renseigner les chemins :
-    - GameBase  ex : set "GB64=C:\GameBase\Commodore 64"
-    - Tools     ex : "TOOLS=%GB64%\Emulators" (il faut qu'il pointe vers le dossier où se trouve l'utilitaire C1541.exe)
+    - GameBase  (ex : set "GB64=C:\GameBase\Commodore 64")
+    - Tools     (ex : "TOOLS=%GB64%\Emulators" (il faut qu'il pointe vers le dossier où se trouve l'utilitaire C1541.exe))
 
 Utilisation :
 - Copier et exécuter le script batch dans un lecteur/sous-dossier avec au moins 4 à 5 Go d'espace libre.
