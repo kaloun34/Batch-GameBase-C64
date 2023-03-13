@@ -49,7 +49,7 @@ exit /b
 			set "dirname=%%D"
 			set "letter=!dirname:~0,1!"
 			set "number=!dirname:~1!"
-			set "newname=!letter!  [0!number!]"
+			set "newname=!letter! [0!number!]"
 			ren "%%D" "!newname!"
 		)
 
@@ -58,7 +58,7 @@ exit /b
 			set "dirname=%%D"
 			set "letter=!dirname:~0,1!"
 			set "number=!dirname:~1!"
-			set "newname=!letter!  [!number!]"
+			set "newname=!letter! [!number!]"
 			ren "%%D" "!newname!"
 		)
 
@@ -67,7 +67,7 @@ exit /b
 			set "dirname=%%D"
 			set "letter=0"
 			set /a "num=!dirname!"
-			set "newname=!letter!  [!dirname!]"
+			set "newname=!letter! [!dirname!]"
 			ren "%%D" "!newname!"
 		)
 	)
@@ -98,16 +98,16 @@ exit /b
 		set "debL=!Last:~0,1!"
 		set "restL=!Last:~1!"
 
-        call :Majmin restF 
+        call :Majmin restF
 		set "Firstr=!debF!!restF!"
-		
+
 		call :Majmin restL
 		set "Lastr=!debL!!restL!"
 
 		echo "Firstr: !Firstr!"
 		echo "Lastr: !LAstr!"
 
-        ren "%%D" "%%D  (!Firstr!  --  !Lastr!)"
+        ren "%%D" "%%D  (!Firstr! -- !Lastr!)"
 
     )
     endlocal
@@ -132,8 +132,8 @@ exit /b
 
 			for /F %%c in ('dir !folder!\*.nfo /A-D /B ^| find "." /C') do set count=%%c
 
-			pushd "%D64%\!folder!"
-				if !count! gtr !nbnfo! (
+			if !count! gtr !nbnfo! (
+				pushd "%D64%\!folder!"
 					set /a foldercount=1
 					set /a filecount=1
 					set "subfoldername=!folder!!foldercount!"
@@ -153,9 +153,9 @@ exit /b
 						move "!filename!"*.*  "!subfoldername!"
 					)
 					call :gtr
-                    call :flst
-				)
-			popd
+					call :flst
+				popd
+			)
 		)
 	popd
 	endlocal
