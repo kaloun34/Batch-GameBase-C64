@@ -104,9 +104,6 @@ exit /b
 		call :Majmin restL
 		set "Lastr=!debL!!restL!"
 
-		echo "Firstr: !Firstr!"
-		echo "Lastr: !LAstr!"
-
         ren "%%D" "%%D  (!Firstr! -- !Lastr!)"
 
     )
@@ -118,7 +115,6 @@ exit /b
 :: -----------------Routine Majmin----------------
 :Majmin
 	for %%z in (a b c d e f g h i j k l m n o p q r s t u v w x y z) do call set "%~1=%%%~1:%%z=%%z%%"
-	echo "min: %~1"
 exit /b
 :: -----------------fin Routine Majmin----------------
 
@@ -126,38 +122,59 @@ exit /b
 :: -----------------Routine MAIN----------------
 :main
 	setlocal enabledelayedexpansion
+	set "dirlst="
 	pushd "%D64%"
-		for /d %%d in ("*") do (
+		for /d /r %%d in ("*") do (
 			set "folder=%%d"
 
-			for /F %%c in ('dir !folder!\*.nfo /A-D /B ^| find "." /C') do set count=%%c
+			Rem : Recherche des dossiers à traiter
+				: Dossier non vide et avec plus de !nbnfo! fichiers.nfo
+				: Il n'y a pas nécéssairement des fichiers dans les dossiers parcourues
 
-			if !count! gtr !nbnfo! (
-				pushd "%D64%\!folder!"
-					set /a foldercount=1
-					set /a filecount=1
-					set "subfoldername=!folder!!foldercount!"
-					mkdir !subfoldername!
+			set "found="
 
-					for %%f in (*.nfo) do (
-						set filename=%%~nf
+			if exist "!folder!\*.nfo" set "found=true"
 
-						if !filecount! gtr !nbnfo! (
-							set /a "foldercount+=1"
-							set /a filecount=1
-							set "subfoldername=!folder!!foldercount!"
-							mkdir !subfoldername!
-						)
-
-						set /a "filecount+=1"
-						move "!filename!"*.*  "!subfoldername!"
-					)
-					call :gtr
-					call :flst
-				popd
+			if defined found (
+				set /a count=0
+				for /F %%c in ('dir "!folder!"\*.nfo /A-D /B ^| find "." /C') do (
+					set count=%%c
+					if !count! gtr !nbnfo! ( set "dirlst=!dirlst! "!folder!"" )
+				)
 			)
 		)
 	popd
+
+	rem Parcours de la liste de dossiers
+	for %%d in (%dirlst%) do (
+		set "folder=%%d"
+		set "folder=!folder:~1,-1!"
+
+		for /F "delims=" %%i in ("!folder!") do set "dossier=%%~ni"
+
+		pushd "!folder!"
+			set /a foldercount=1
+			set /a filecount=1
+			set "subfoldername=!dossier!!foldercount!"
+			mkdir "!subfoldername!"
+
+			for %%f in (*.nfo) do (
+				set filename=%%~nf
+				if !filecount! gtr !nbnfo! (
+					set /a "foldercount+=1"
+					set /a filecount=1
+					set "subfoldername=!dossier!!foldercount!"
+					mkdir !subfoldername!
+				)
+
+				set /a "filecount+=1"
+
+				move "!filename!"*.* !subfoldername!
+			)
+			call :gtr
+			call :flst
+		popd
+	)
 	endlocal
 exit /b
 :: -----------------Fin Routine MAIN----------------
