@@ -113,6 +113,7 @@ setlocal enabledelayedexpansion
 			set "name=!name:É=E!"
 			set "name=!name:ê=e!"
 			set "name=!name:Ê=E!"
+			set "name=!name:í=i!"
 			set "name=!name:ò=o!"
 			set "name=!name:ó=o!"
 			set "name=!name:ô=o!"
